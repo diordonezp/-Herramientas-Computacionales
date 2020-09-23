@@ -1,4 +1,4 @@
-#Include<iostream>
+#include<iostream>
 
 void do_something(int & var); 
 
