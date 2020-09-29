@@ -1,4 +1,4 @@
-plot"datos.txt" u 1:2 w l
+splot"datos.txt" 
 set term pdf
 set output "laplace.pdf"
 replot

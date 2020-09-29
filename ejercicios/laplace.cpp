@@ -11,9 +11,12 @@ int main(void)
 
     double a=1.0;
     double v=2.0;
+    double z=0.9;
     
-    for(double x=0.0;x<=a;x+=0.001){
-        std::cout<<x<<"\t"<<phi(0.5,0.5,x,a,v)<<"\n";
+    for(double x=0.0;x<=a;x+=0.1){
+        for(double y=0.0;y<=a;y+=0.1){
+            std::cout<<x<<"\t"<<y<<"\t"<<phi(x,y,z,a,v)<<"\n";
+        }
     }
     
     return 0;
@@ -31,7 +34,7 @@ double phi(double x,double y,double z,double a,double v)
 {
     double sum=0.0;
 
-    for(int n=1;n<=108;n+=2){
+    for(int n=1;n<=100;n+=2){
         for(int m=1;m<=200;m+=2){
             sum+=a_nm(n,m,a,x,y,z);
         }
