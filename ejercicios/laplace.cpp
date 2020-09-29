@@ -11,7 +11,7 @@ int main(void)
 
     double a=1.0;
     double v=2.0;
-    double z=0.9;
+    double z=0.0;
     
     for(double x=0.0;x<=a;x+=0.1){
         for(double y=0.0;y<=a;y+=0.1){
