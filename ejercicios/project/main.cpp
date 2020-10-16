@@ -1,30 +1,36 @@
 #include<iostream>
 #include<vector>
 #include<random>
+#include<cmath>
+//#include"main.hpp"
 
 void print(std::vector<double> r);
-void I_state(std::vector<double> &r,double l,int Iseed);
-void n_state(std::vector<double> &r,int n,int seed);
+void I_state(std::vector<double> &r,double l, int Iseed);
+void n_state(std::vector<double> &r,double l,std::mt19937 &gen);
+double E(std::vector<double> r,double l,int i);
 
 int main(void)
 {
-    double lattice=100;//longitud de la caja que encierra las partículas
+    double lattice=100.0;//mitad de la longitud de la caja que encierra
+    //las partículas
     int N=400;//número de partículas
     int n=1e6;//iteraciones
     int seed=0;//semilla aleatoria para evolución del sistema
     int Iseed=0;//semilla aleatoria para el estado inicial
+    int j=8;//númerode casillas por lado de la grilla -> grilla ixi
+
+    std::mt19937 gen(seed);
     
     std::vector<double> r(2*N);
     
-    /*for(int i=0;i<2*N;i+=2){
-        for(int j=0;j<2*N;j+=2){
-            r[i*N+j]=(-(N-1)/2)+i/2;
-            r[i*N+j+1]=((N-1)/2)-j/2;
-        }
-        }*/
+    //inicialización de las partículas
     I_state(r,lattice,Iseed);
-    n_state(r,n,seed);
-    print(r);
+    
+    //evolución del sistema en n pasos de camino aleatorio
+    for(int i=0;i<n;i++){
+        n_state(r,lattice,gen);
+        std::cout<<i<<"\t"<<E(r,lattice,j)<<"\n";
+    }
     
     return 0;
 }
@@ -38,24 +44,64 @@ void print(std::vector<double> r)
 
 void I_state(std::vector<double> &r,double l, int Iseed)
 {
-    //std::random_device vd;
     std::mt19937 gen(Iseed);
-    std::uniform_real_distribution<> dis(-l/20,l/20);
+    std::uniform_real_distribution<> dis(-l/10,l/10);
 
     for(int i=0;i<r.size();i++){
         r[i]=dis(gen);
     }
 }
 
-void n_state(std::vector<double> &r,int n,int seed)
+void n_state(std::vector<double> &r,double l,std::mt19937 &gen)
 {
-    double dl=0.01;
-    std::mt19937 gen(seed);
+    double dl=0.5;
     std::uniform_real_distribution<> dis(-dl,dl);
     
-    for(int j=0;j<n;j++){
-        for(int i=0;i<r.size();i++){
-            r[i]+=dis(gen);
+    for(int i=0;i<r.size();i++){
+        r[i]+=dis(gen);
+        if(r[i]>l){
+            r[i]=l;
+        }
+        if(r[i]<-l){
+            r[i]=-l;
         }
     }
+}
+
+double E(std::vector<double> r,double l, int m)
+{
+    double dm=2*(l/m);
+    int N=r.size()/2;
+    double E=0.0;
+
+    //P será el vector de las m^2 casillas de la grilla 
+    std::vector<double> P(m*m);
+    
+    for(int ii=0;ii<P.size();ii++){
+        P[ii]=0.0;
+    }
+
+    //cada elemento de P cuenta cuantas la probabilidad (partículas en i/N) hay en cada casilla
+    for(int k=0;k<r.size();k+=2){
+        int ii=0;
+        int jj=0;
+        for(int i=0;i<m;i++){
+            if(r[k]>=(-l+i*dm) && r[k]<(-l+i*dm+dm)){
+                ii=i; 
+            }
+        }
+        for(int i=0;i<m;i++){
+            if(r[k+1]>=(-l+i*dm) && r[k+1]<(-l+i*dm+dm)){
+                jj=i;
+            }
+        }
+        P[jj*m+ii]+=1.0/N;
+    }
+
+    for(int i=0;i<P.size();i++){
+        if(P[i]!=0){
+            E+=P[i]*std::log(P[i]);
+        }
+    }
+    return -E;
 }
