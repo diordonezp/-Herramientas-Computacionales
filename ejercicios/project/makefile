@@ -5,21 +5,21 @@ SANITIZEFLGS=-fsanitize=address -fsanitize=leak -fsanitize=undefined
 #MAKE========================================================================
 all: data.txt
 
-%.o:%.cpp main.hpp
+%.o:%.cpp main.hpp E.hpp
 	$(CXX) -c $<
 
-main.x: main.o print.o I_state.o n_state.o E.o set_P.o
-	g++ $^ $(SANITIZEFLGS) -o $@
+main.x: main.o print.o I_state.o n_state.o E.o set_P.o entropy.o
+	g++ $(SANITIZEFLGS) $^ -o $@
 
 data.txt: main.x
 	./$< >$@
 #============================================================================
 
 #TEST========================================================================
-test: test1.x
+test: p_test.x
 
-test1.x:test1.o n_state.o
-	g++ $^ $(SANITIZEFLGS) -o $@
+p_test.x: p_test.o I_state.o n_state.o
+	g++ $(SANITIZEFLGS) $^ -o $@
 	./$@
 #============================================================================
 

@@ -1,7 +1,6 @@
 #include<iostream>
 #include<vector>
 #include<random>
-#include<cmath>
 #include"main.hpp"
 
 int main(void)

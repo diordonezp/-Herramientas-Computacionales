@@ -1,3 +1,4 @@
 #pragma once
 
-void set_P(std::vector<double> r,std::vector<double> &P,int N,double l,int m,double dm);
+void set_P(std::vector<double> r,std::vector<double> &P,double l,int m,double dm);
+double entropy(std::vector<double> P);

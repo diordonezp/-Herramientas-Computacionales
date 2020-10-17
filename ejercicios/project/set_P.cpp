@@ -1,8 +1,11 @@
 #include<vector>
 
-void set_P(std::vector<double> r,std::vector<double> &P,int N,double l,int m,double dm)
+void set_P(std::vector<double> r,std::vector<double> &P,double l,int m,double dm)
 {
-    //cada elemento de P cuenta cuantas la probabilidad (partículas en i/N) hay en cada casilla
+    int N=r.size()/2;
+    
+    /*cada elemento de P cuenta la probabilidad (partículas en i/N)
+      hay en cada casilla*/
     for(int k=0;k<r.size();k+=2){
         int ii=0;
         int jj=0;
