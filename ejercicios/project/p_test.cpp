@@ -18,6 +18,11 @@ int main(void)
             test=false;
             break;
         }
+        if(r[i]==r[i+1]){
+            std::cerr<<"VECTOR DE PARTÍCULAS MAL INICIALIZADO: FUNCIÓN I_state.\n";
+            test=false;
+            break;
+        }
     }
     if(test==true){std::cout<<"test1: PASSED.\n";}
     //====================================================================================
