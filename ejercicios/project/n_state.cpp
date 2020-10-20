@@ -3,7 +3,7 @@
 
 void n_state(std::vector<double> &r,double l,std::mt19937 &gen)
 {
-    double dl=0.5;
+    double dl=0.15;
     std::uniform_real_distribution<> dis(-dl,dl);
     
     /*a cada elemento del vector, se suma una cantidad aleatoria pequeña

@@ -10,12 +10,12 @@ void set_P(std::vector<double> r,std::vector<double> &P,double l,int m,double dm
         int ii=0;
         int jj=0;
         for(int i=0;i<m;i++){
-            if(r[k]>=(-l+i*dm) && r[k]<(-l+i*dm+dm)){
+            if(r[k]>=(-l+i*dm)){// && r[k]<(-l+i*dm+dm)){
                 ii=i; 
             }
         }
         for(int i=0;i<m;i++){
-            if(r[k+1]>=(-l+i*dm) && r[k+1]<(-l+i*dm+dm)){
+            if(r[k+1]>=(-l+i*dm)){// && r[k+1]<(-l+i*dm+dm)){
                 jj=i;
             }
         }

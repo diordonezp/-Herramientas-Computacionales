@@ -1,17 +1,25 @@
 #include<iostream>
+#include<fstream>
 #include<vector>
 #include<random>
 #include"main.hpp"
 
 int main(void)
 {
-    double lattice=100.0;//mitad de la longitud de la caja que encierra
+    std::cout.precision(15);std::cout.setf(std::ios::scientific);
+    std::ifstream fin("instructions/Parameters.txt");
+
+    int N=0;;//número de partículas
+    fin>>N;
+    double lattice=0.0;//mitad de la longitud de la caja que encierra
     //las partículas
-    int N=400;//número de partículas
-    int n=1e5;//iteraciones
+    fin>>lattice;
+    int n=0;//iteraciones
+    fin>>n;
     int seed=0;//semilla aleatoria para evolución del sistema
+    fin>>seed;
     int Iseed=0;//semilla aleatoria para el estado inicial
-    int j=8;//númerode casillas por lado de la grilla -> grilla ixi
+    int j=8;//número de casillas por lado de la grilla -> grilla jxj
 
     std::mt19937 gen(seed);
     
@@ -26,5 +34,6 @@ int main(void)
         std::cout<<i<<"\t"<<E(r,lattice,j)<<"\n";
     }
     
+    fin.close();
     return 0;
 }
