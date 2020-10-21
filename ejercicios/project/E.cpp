@@ -9,7 +9,7 @@ double E(std::vector<double> r,double l, int m)
     std::vector<double> P(m*m);
     
     //se inicializa P con ceros
-    for(int ii=0;ii<P.size();ii++){
+    for(long unsigned int ii=0;ii<P.size();ii++){
         P[ii]=0.0;
     }
     

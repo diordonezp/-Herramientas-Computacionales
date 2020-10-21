@@ -8,7 +8,7 @@ void I_state(std::vector<double> &r,double l, int Iseed)
     
     /*se le asigna a cada elemento un valor aleatorio dentro de una caja
       de dimensión l/5*l/5*/
-    for(int i=0;i<r.size();i++){
+    for(long unsigned int i=0;i<r.size();i++){
         r[i]=dis(gen);
     }
 }

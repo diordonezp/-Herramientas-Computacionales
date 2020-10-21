@@ -16,7 +16,7 @@ bool test1(void)
       dos componentes tengan la misma posición.*/
     for(int i=0;i<rep;i++){
         I_state(r,10.0,dis(gen));
-        for(int i=0;i<r.size();i++){
+        for(long unsigned int i=0;i<r.size();i++){
             if(r[i]>1 || r[i]<-1){
                 test=false;
                 break;
