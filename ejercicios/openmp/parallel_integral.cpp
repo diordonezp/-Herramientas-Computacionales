@@ -16,7 +16,7 @@ int main(int argc,char **argv)
 
     double t=std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count()/1000.0;
     
-	std::cout<<num_threads<<"\t"<<I<<"\t"<<t<<"\n";
+	std::cout<<num_threads<<" "<</*I<<" "<<*/t<<"\n";
 	
 	return 0;
 }
