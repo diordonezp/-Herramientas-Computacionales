@@ -15,8 +15,12 @@ int main(int argc,char **argv)
     auto end=std::chrono::steady_clock::now();
 
     double t=std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count()/1000.0;
-    
-	std::cout<<num_threads<<" "<</*I<<" "<<*/t<<"\n";
+
+    //con esta linea obtienes el valor de la integral para el número de hilos
+	//std::cout<<num_threads<<" "<<I<<"\n";
+
+    //con esta linea obtienes la eficiencia y el rendimiento de la paralelización
+    std::cout<<num_threads<<" "<</t<<"\n";
 	
 	return 0;
 }
