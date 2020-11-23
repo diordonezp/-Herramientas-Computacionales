@@ -19,10 +19,11 @@ void leap_frog(std::vector<particle> &p,double dt);
 const double g=9.81;
 const double dt=0.01;
 const int N=1000;
+const double K=250.0;
 
 int main(int argc, char **argv)
 {
-    std::vector<particle> p(1);
+    std::vector<particle> p(2);
 
     initial_conditions(p);
     set_F(p);
@@ -41,55 +42,81 @@ int main(int argc, char **argv)
 
 void print(std::vector<particle> &p,double t)
 {
-    std::cout<<p[0].mass<<" "<<p[0].rad<<" "<<t<<" ";
-    for(int i=0;i<3;i++){
-        std::cout<<p[0].r[i]<<" ";
+    std::cout<<t<<" ";
+    for(long unsigned int n=0;n<p.size();n++){
+        std::cout<<p[n].rad<<" ";
+        for(int i=0;i<3;i++){
+            std::cout<<p[n].r[i]<<" ";
+        }
+        std::cout<<" ";
     }
-    std::cout<<p[0].F[0]<<"\n";
+    std::cout<<"\n";
 }
 
 void initial_conditions(std::vector<particle> &p)
 {
-    p[0].r.resize(3);
-    p[0].v.resize(3);
-    p[0].F.resize(3);
-    p[0].mass=5.0;
-    p[0].rad=1.0;
-
-    for(int i=0;i<3;i++)
-    {
-        p[0].r[i]=0.0;
+    for(long unsigned int i=0;i<p.size();i++){
+        p[i].r.resize(3);
+        p[i].v.resize(3);
+        p[i].F.resize(3);
+        p[i].mass=1.0;
+        p[i].rad=1.0;
     }
 
-    p[0].r[0]=5;
+    for(long unsigned int n=0;n<p.size();n++){
+        for(int i=0;i<3;i++)
+        {
+            p[n].r[i]=0.0;
+            p[n].v[i]=0.0;
+            p[n].F[i]=0.0;
+        }
+    }
+
+    p[0].r[2]=5.0;
+    p[1].r[0]=0.0;
 }
 
 void set_F(std::vector<particle> &p)
 {
     //reset
-    for(int i=0;i<3;i++){
-        p[0].F[i]=0.0;
+    for(long unsigned int n=0;n<p.size();n++){
+        for(int i=0;i<3;i++){
+            p[n].F[i]=0.0;
+        }
     }
     
     //gravity
-    //p[0].F[2]-=p[0].mass*g;
+    for(long unsigned int n=0;n<p.size();n++){
+        p[n].F[2]-=p[n].mass*g;
+    }
 
-    p[0].F[0]-=p[0].r[0];
+    //ground
+    for(long unsigned int n=0;n<p.size();n++){
+        double delta=p[n].rad-p[n].r[2];
+        if(delta>0){
+            p[n].F[2]+=K*delta;
+            p[n].F[2]-=0.5*p[n].v[2];
+        }
+    }
 }
 
 void start(std::vector<particle> &p,double dt)
 {
-    for(int i=0;i<3;i++){
-        p[0].v[i]-=p[0].F[i]*dt/(2*p[0].mass);
+    for(long unsigned int n=0;n<p.size();n++){
+        for(int i=0;i<3;i++){
+            p[n].v[i]-=p[n].F[i]*dt/(2*p[n].mass);
+        }
     }
 }
 
 void leap_frog(std::vector<particle> &p,double dt)
 {
-    for(int i=0;i<3;i++){
-        p[0].v[i]+=p[0].F[i]*dt/(p[0].mass);
-    }
-    for(int i=0;i<3;i++){
-        p[0].r[i]+=p[0].v[i]*dt;
+    for(long unsigned int n=0;n<p.size();n++){
+        for(int i=0;i<3;i++){
+            p[n].v[i]+=p[n].F[i]*dt/(p[n].mass);
+        }
+        for(int i=0;i<3;i++){
+            p[n].r[i]+=p[n].v[i]*dt;
+        }
     }
 }
