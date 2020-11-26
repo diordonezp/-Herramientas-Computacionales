@@ -3,6 +3,7 @@
 #include<string>
 #include<vector>
 #include<random>
+#include<cmath>
 
 struct particle{
     double mass;
@@ -14,22 +15,24 @@ struct particle{
 
 void print(std::vector<particle> &p,double t);
 void p_print(std::vector<particle> &p,int istep);
-void initial_conditions(std::vector<particle> &p);
+void initial_conditions(std::vector<particle> &p,double Temp,double R);
 void set_F(std::vector<particle> &p);
 void start(std::vector<particle> &p,double dt);
 void leap_frog(std::vector<particle> &p,double dt);
 
-const double g=9.81;
-const double dt=0.05;
-const int Nsteps=1000;
-const double K=250.0;
-const int N=2;
+const double g=9.81; //gravedad terrestre
+const double dt=0.01; //paso de tiempo de evolución
+const int Nsteps=1000; //número de pasos
+const double K=500.0; //constante de los resortes que modelan las paredes
+const int N=2; //número de partículas
+const double R=8.314472; //constante universal de los gases en J/K*mol
+const double Temp=293.15; //temperatura en kelvin (20°)
 
 int main(int argc, char **argv)
 {
     std::vector<particle> p(N);
 
-    initial_conditions(p);
+    initial_conditions(p,Temp,R);
     set_F(p);
     start(p,dt);
     
@@ -63,6 +66,9 @@ void print(std::vector<particle> &p,double t)
         for(int i=0;i<3;i++){
             std::cout<<p[n].r[i]<<" ";
         }
+        for(int i=0;i<3;i++){
+            std::cout<<p[n].v[i]<<" ";
+        }
     }
     std::cout<<"\n";
 }
@@ -81,7 +87,7 @@ void p_print(std::vector<particle> &p,int istep)
     }
 }
 
-void initial_conditions(std::vector<particle> &p)
+void initial_conditions(std::vector<particle> &p,double Temp,double R)
 {
     for(long unsigned int i=0;i<p.size();i++){
         p[i].r.resize(3);
@@ -91,28 +97,31 @@ void initial_conditions(std::vector<particle> &p)
         p[i].rad=1.0;
     }
 
+    //inicialización aleatoria de las partículas siguiendo la equipartición de la energía
+    std::mt19937 gen(0);
+    std::uniform_real_distribution<> dis(-1,1);
+    std::uniform_real_distribution<> h(0,30);
+    std::uniform_real_distribution<> x(0,10);
+
     for(long unsigned int n=0;n<p.size();n++){
         for(int i=0;i<3;i++)
         {
-            p[n].r[i]=0.0;
-            p[n].v[i]=0.0;
             p[n].F[i]=0.0;
+            p[n].v[i]=dis(gen);
+            if(i==2){
+                p[n].r[i]=h(gen);
+            }
+            else{
+                p[n].r[i]=x(gen);
+            }
+        }
+        double vrms=std::sqrt((3*R*Temp)/p[n].mass);
+        double v=std::hypot(p[n].v[0],p[n].v[1],p[n].v[2]);
+
+        for(int i=0;i<3;i++){
+            p[n].v[i]*=vrms/v;
         }
     }
-
-    p[0].r[0]=5.0;
-    p[0].r[1]=5.0;
-    p[0].r[2]=25.0;
-    p[0].v[0]=0.2;
-    p[0].v[1]=1.0;
-    p[0].v[2]=15.0;
-    
-    p[1].r[0]=0.0;
-    p[1].r[1]=0.0;
-    p[1].r[2]=10.0;
-    p[1].v[0]=0.0;
-    p[1].v[1]=1.0;
-    p[1].v[2]=1.0;
 }
 
 void set_F(std::vector<particle> &p)
@@ -130,6 +139,14 @@ void set_F(std::vector<particle> &p)
     }
 
     //bounce by other particles
+    double d=std::hypot(p[0].r[0]-p[1].r[0],p[0].r[1]-p[1].r[1],p[0].r[2]-p[1].r[2]);
+    double h=p[0].rad+p[1].rad-d;
+    if(h>0){
+        for(int i=0;i<3;i++){
+            p[0].F[i]=(K*h*(p[0].r[i]-p[1].r[i]))/d;
+            p[1].F[i]=-p[0].F[i];
+        }
+    }
 
     //ground
     for(long unsigned int n=0;n<p.size();n++){
