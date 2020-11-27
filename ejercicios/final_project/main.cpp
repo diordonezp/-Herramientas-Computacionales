@@ -21,12 +21,12 @@ void start(std::vector<particle> &p,double dt);
 void leap_frog(std::vector<particle> &p,double dt);
 
 const double g=9.81; //gravedad terrestre
-const double dt=0.01; //paso de tiempo de evolución
+const double dt=0.05; //paso de tiempo de evolución
 const int Nsteps=1000; //número de pasos
-const double K=500.0; //constante de los resortes que modelan las paredes
-const int N=2; //número de partículas
+const double K=250.0; //constante de los resortes que modelan las paredes
+const int N=1000; //número de partículas
 const double R=8.314472; //constante universal de los gases en J/K*mol
-const double Temp=293.15; //temperatura en kelvin (20°)
+const double Temp=10; //temperatura en kelvin
 
 int main(int argc, char **argv)
 {
@@ -94,7 +94,7 @@ void initial_conditions(std::vector<particle> &p,double Temp,double R)
         p[i].v.resize(3);
         p[i].F.resize(3);
         p[i].mass=1.0;
-        p[i].rad=1.0;
+        p[i].rad=0.1;
     }
 
     //inicialización aleatoria de las partículas siguiendo la equipartición de la energía
@@ -122,6 +122,16 @@ void initial_conditions(std::vector<particle> &p,double Temp,double R)
             p[n].v[i]*=vrms/v;
         }
     }
+
+    /*p[0].r[0]=5;
+    p[0].r[1]=5;
+    p[0].r[2]=0;
+    p[1].r[0]=5;
+    p[1].r[1]=5;
+    p[1].r[2]=10;
+    p[2].r[0]=5;
+    p[2].r[1]=5;
+    p[2].r[2]=20;*/
 }
 
 void set_F(std::vector<particle> &p)
@@ -139,12 +149,18 @@ void set_F(std::vector<particle> &p)
     }
 
     //bounce by other particles
-    double d=std::hypot(p[0].r[0]-p[1].r[0],p[0].r[1]-p[1].r[1],p[0].r[2]-p[1].r[2]);
-    double h=p[0].rad+p[1].rad-d;
-    if(h>0){
-        for(int i=0;i<3;i++){
-            p[0].F[i]=(K*h*(p[0].r[i]-p[1].r[i]))/d;
-            p[1].F[i]=-p[0].F[i];
+    for(long unsigned int n=0;n<p.size();n++){
+        for(long unsigned int m=0;m<p.size();m++){
+            if(n!=m){
+                double d=std::hypot(p[n].r[0]-p[m].r[0],p[n].r[1]-p[m].r[1],p[n].r[2]-p[m].r[2]);
+                double h=p[n].rad+p[m].rad-d;
+                if(h>0){
+                    for(int i=0;i<3;i++){
+                        p[n].F[i]=(K*h*(p[n].r[i]-p[m].r[i]))/d;
+                        p[m].F[i]=-p[n].F[i];
+                    }
+                }
+            }
         }
     }
 
@@ -153,7 +169,7 @@ void set_F(std::vector<particle> &p)
         double delta=p[n].rad-p[n].r[2];
         if(delta>0){
             p[n].F[2]+=K*delta;
-            p[n].F[2]-=0.5*p[n].v[2];
+            //p[n].F[2]-=0.5*p[n].v[2];
         }
     }
 
@@ -163,7 +179,7 @@ void set_F(std::vector<particle> &p)
         double delta=p[n].rad+p[n].r[2]-Lz;
         if(delta>0){
             p[n].F[2]-=K*delta;
-            p[n].F[2]-=0.5*p[n].v[2];
+            //[n].F[2]-=0.5*p[n].v[2];
         }
     }
 
@@ -172,7 +188,7 @@ void set_F(std::vector<particle> &p)
         double delta=p[n].rad-p[n].r[1];
         if(delta>0){
             p[n].F[1]+=K*delta;
-            p[n].F[1]-=0.5*p[n].v[1];
+            //p[n].F[1]-=0.5*p[n].v[1];
         }
     }
 
@@ -182,7 +198,7 @@ void set_F(std::vector<particle> &p)
         double delta=p[n].rad+p[n].r[1]-Ly;
         if(delta>0){
             p[n].F[1]-=K*delta;
-            p[n].F[1]-=0.5*p[n].v[1];
+            //p[n].F[1]-=0.5*p[n].v[1];
         }
     }
 
@@ -191,7 +207,7 @@ void set_F(std::vector<particle> &p)
         double delta=p[n].rad-p[n].r[0];
         if(delta>0){
             p[n].F[0]+=K*delta;
-            p[n].F[0]-=0.5*p[n].v[0];
+            //p[n].F[0]-=0.5*p[n].v[0];
         }
     }
 
@@ -201,7 +217,7 @@ void set_F(std::vector<particle> &p)
         double delta=p[n].rad+p[n].r[0]-Lx;
         if(delta>0){
             p[n].F[0]-=K*delta;
-            p[n].F[0]-=0.5*p[n].v[0];
+            //p[n].F[0]-=0.5*p[n].v[0];
         }
     }
 }
