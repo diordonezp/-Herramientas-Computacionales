@@ -27,7 +27,7 @@ const double g=9.81; //gravedad terrestre
 const double dt=0.05; //paso de tiempo de evolución
 const int Nsteps=1000; //número de pasos
 const double K=250.0; //constante de los resortes que modelan las paredes
-const int N=2000; //número de partículas
+const int N=1000; //número de partículas
 const double k_b=1.380649e-23; //constante de Boltzmann
 const double Temp=500; //temperatura en kelvin
 
@@ -92,9 +92,9 @@ void p_print(std::vector<particle> &p,int istep)
     std::ofstream fout(fname);
     
     for(long unsigned int n=0;n<p.size();n++){
-        fout<<p[n].rad<<" ";
+        fout<<p[n].rad<<", ";
         for(int i=0;i<3;i++){
-            fout<<p[n].r[i]<<" ";
+            fout<<p[n].r[i]<<", ";
         }
         fout<<"\n";
     }
